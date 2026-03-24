@@ -44,6 +44,9 @@ async function handler(req: any, res: any) {
     const sanitizedFilter = {
       ...filter,
       "names.0": { $exists: true },
+      "counties.0": { $exists: true },
+      "state.code": { $exists: true },
+      "state.name": { $exists: true },
     };
 
     const [minerals, total] = await Promise.all([
