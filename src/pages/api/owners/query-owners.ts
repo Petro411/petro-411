@@ -33,17 +33,16 @@ async function handler(req: any, res: NextApiResponse) {
             };
         }
 
-        // const sanitizedFilter = {
-        //     ...filter,
-        //     "names.0": { $exists: true },
-        //     "counties.0": { $exists: true },
-        //     "state.code": { $exists: true },
-        //     "state.name": { $exists: true },
-        // };
+        const sanitizedFilter = {
+            ...filter,
+            "counties.0": { $exists: true },
+            "state.code": { $exists: true },
+            "state.name": { $exists: true },
+        };
 
         const [owners, totalItems, counties] = await Promise.all([
-            MineralOwner.find(filter).skip(skip).limit(limitNum),
-            MineralOwner.countDocuments(filter),
+            MineralOwner.find(sanitizedFilter).skip(skip).limit(limitNum),
+            MineralOwner.countDocuments(sanitizedFilter),
             Location.find({ type: "county", "state.code": { $regex: new RegExp(ownerCity, 'i') } }).sort({ name: 1 })
         ]);
 
