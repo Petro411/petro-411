@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
+import dns from 'dns';
 
 
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 const MONGODB_URI = process.env.MONGODB_URI ?? "";
 
 if (!MONGODB_URI) {
@@ -36,6 +38,7 @@ export async function dbConnect() {
         }
         return conn;
       } catch (err) {
+        console.log(err)
         if (retries <= 0) {
           console.error("❌ MongoDB connection failed:", err);
           throw err;

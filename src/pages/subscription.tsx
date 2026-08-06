@@ -51,6 +51,10 @@ const Subscription = ({ plans }: any) => {
     <>
       <Head>
         <title>Subscription</title>
+        <meta
+        name="robots"
+        content={"noindex, nofollow, noarchive, nosnippet"}
+      />
       </Head>
       <PageHeader
         title="Subscription"

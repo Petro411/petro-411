@@ -1,5 +1,6 @@
-import { withMethod } from "@/lib/middlewares/withMethod"
+import { withMethod } from "@/lib/middlewares/withMethod";
 import Location from "@/lib/mongodb/models/Location";
+
 
 async function handler(req: any, res: any) {
     try {
@@ -11,6 +12,7 @@ async function handler(req: any, res: any) {
 
         return res.status(200).json({ locations, success: true });
     } catch (error: any) {
+        console.log(error)
         return res.status(error?.statusCode ?? 500).json({
             message: error?.message,
             success: false,

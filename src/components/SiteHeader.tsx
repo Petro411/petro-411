@@ -2,8 +2,8 @@ import { ArrowRightIcon, TextAlignRightIcon } from "@radix-ui/react-icons";
 import { Avatar, Flex, Text } from "@radix-ui/themes";
 import { homeRoutes } from "@/config/HomeRoutes";
 import { getUser } from "@/context/AuthContext";
-import React, { memo, useState } from "react";
 import { useRouter } from "next/router";
+import { memo, useState } from "react";
 import Link from "next/link";
 
 import Container from "./Container";

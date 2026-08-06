@@ -42,9 +42,11 @@ const NewsLetter = () => {
     <Container>
       <div className="grid grid-cols-1 lg:grid-cols-2 gradientBg rounded-xl gap-12 2xl:gap-0 overflow-hidden border items-center">
         <div className="flex flex-col gap-8 text-white p-8 sm:p-12 2xl:p-16">
-          <Heading size={"8"}>{label.StayInLoop}</Heading>
+          <Heading as={"h2"} size={"8"}>
+            {label.StayInLoop}
+          </Heading>
           <Flex direction={"column"} gap={"4"}>
-            <Text size={"3"}>
+            <Text as={"p"} size={"3"}>
               {label.StayInLoopDes}
             </Text>
           </Flex>
@@ -84,7 +86,7 @@ const NewsLetter = () => {
         <div className={`h-full`}>
           <Image
             src={"/assets/images/newsletter.jpg"}
-            alt=""
+            alt="Petro411 - Stay in the loop with our newsletter"
             className="h-full w-full object-cover"
             height={400}
             width={400}

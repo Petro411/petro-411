@@ -4,6 +4,7 @@ import Testimonials from "@/components/home/Testimonials";
 import HowItWorks from "@/components/home/HowItWorks";
 import baseApi, { endpoints } from "@/services/api";
 import SiteHeader from "@/components/SiteHeader";
+import SeoHead from "@/components/seo/home.meta";
 import NewsLetter from "@/components/NewsLetter";
 import Hero from "@/components/home/Hero";
 import Faqs from "@/components/home/Faqs";
@@ -11,8 +12,6 @@ import Footer from "@/components/Footer";
 import { Flex } from "@radix-ui/themes";
 import { GetStaticProps } from "next";
 import { label } from "@/branding";
-import Head from "next/head";
-import React from "react";
 
 
 type Props = {
@@ -22,10 +21,11 @@ type Props = {
 
 const Home = ({ faqs, locations }: Props) => {
   return (
+    <>
+    <SeoHead
+    faqs={faqs}
+    />
     <main>
-      <Head>
-        <title>{label.SiteName}</title>
-      </Head>
       <SiteHeader />
       <Hero />
       <MineralOwnerFilter
@@ -44,6 +44,8 @@ const Home = ({ faqs, locations }: Props) => {
       </Flex>
       <Footer />
     </main>
+    </>
+
   );
 };
 

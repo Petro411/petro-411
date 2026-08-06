@@ -4,6 +4,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import GetApiErrorMessage from "@/utils/GetApiErrorMessage";
 import GoogleAuth from "@/components/auth/GoogleAuth";
 import AuthLayout from "@/components/auth/AuthLayout";
+import SeoHeadAuth from "@/components/seo/auth.meta";
 import { useMutation } from "@/hooks/useMutation";
 import { setItem } from "@/utils/Localstorage";
 import { endpoints } from "@/services/api";
@@ -57,9 +58,7 @@ const Login = () => {
 
   return (
     <>
-      <Head>
-        <title>Login</title>
-      </Head>
+     <SeoHeadAuth page="login" />
       <AuthLayout title={label.Login}>
         <form className="flex flex-col gap-5 mt-5" onSubmit={handleSubmit}>
           <TextField.Root

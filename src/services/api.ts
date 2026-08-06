@@ -40,7 +40,7 @@ const baseApi = axios.create({
 baseApi.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("Axios error:", error.response?.data || error.message);
+    // console.error("Axios error:", error.response?.data || error.message);
     return Promise.reject(error);
   }
 );

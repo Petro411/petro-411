@@ -1,21 +1,15 @@
-import Layout from "@/components/dashboard/Layout";
-import siteConfig from "@/config/site-config";
-import { getUser } from "@/context/AuthContext";
-import baseApi, { endpoints } from "@/services/api";
-import GetApiErrorMessage from "@/utils/GetApiErrorMessage";
-import withAuth from "@/utils/withAuth";
-import {
-  Badge,
-  Button,
-  Flex,
-  Heading,
-  Separator,
-  Text,
-} from "@radix-ui/themes";
-import { GetServerSideProps } from "next";
-import Head from "next/head";
+import { Badge, Button, Flex, Heading, Separator, Text, } from "@radix-ui/themes";
 import React, { useCallback, useMemo, useState } from "react";
+import GetApiErrorMessage from "@/utils/GetApiErrorMessage";
+import baseApi, { endpoints } from "@/services/api";
+import Layout from "@/components/dashboard/Layout";
+import { getUser } from "@/context/AuthContext";
+import siteConfig from "@/config/site-config";
+import { GetServerSideProps } from "next";
+import withAuth from "@/utils/withAuth";
 import toast from "react-simple-toasts";
+import Head from "next/head";
+
 
 // import { loadStripe } from "@stripe/stripe-js";
 
@@ -58,6 +52,10 @@ const Membership = () => {
     <Layout hideTitle={true}>
       <Head>
         <title>Subscription</title>
+        <meta
+        name="robots"
+        content={"noindex, nofollow, noarchive, nosnippet"}
+      />
       </Head>
       <Flex direction={"row"} align={"center"} justify={"between"}>
         <Heading size={"5"} mb={"2"}>

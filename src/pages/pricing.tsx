@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import PayPalButton from "@/components/dashboard/PaypalButton";
 import { label } from "@/branding";
+import SeoHeadPricing from "@/components/seo/pricing.meta";
 
 const Pricing = ({ plans }: any) => {
   const router = useRouter();
@@ -35,9 +36,9 @@ const Pricing = ({ plans }: any) => {
 
   return (
     <>
-      <Head>
-        <title>Pricing</title>
-      </Head>
+      <SeoHeadPricing
+      plans={plans}
+      />
       <SiteHeader />
       <PageHeader
         title="Pricing"
@@ -53,13 +54,13 @@ const Pricing = ({ plans }: any) => {
                 item?.recommended ? "bg-blue-500/5 border-yellow" : ""
               }`}
             >
-              <Heading size={"4"} align={"left"} className="mb-5">
+              <Heading as="h2" size={"4"} align={"left"} className="mb-5">
                 {item?.title}
               </Heading>
-              <Heading size={"8"} align={"left"} className="mb-2">
+              <Heading as="h3" size={"8"} align={"left"} className="mb-2">
                 ${item?.amount}
               </Heading>
-              <Heading size={"3"} color="gray" align={"left"}>
+              <Heading as="h4" size={"3"} color="gray" align={"left"}>
                 {item?.subtitle}
               </Heading>
 
@@ -92,7 +93,7 @@ const Pricing = ({ plans }: any) => {
                 </div>
               )}
 
-              <Heading size={"3"} color="gray" className="mt-5 mb-1">
+              <Heading as="h5" size={"3"} color="gray" className="mt-5 mb-1">
                 Features
               </Heading>
               <Separator className="!w-full mb-2" />
@@ -106,7 +107,7 @@ const Pricing = ({ plans }: any) => {
               ))}
               <Separator className="!w-full mt-2" />
 
-              <Text size={"3"} color="gray" className="mt-3">
+              <Text as="p" size={"3"} color="gray" className="mt-3">
                 {item?.description}
               </Text>
             </Flex>

@@ -95,7 +95,7 @@ const MineralSearchForm = memo(
         {title || paragraph ? (
           <Flex direction={"column"} gap={"1"}>
             {title && (
-              <Heading size={"6"} className="text-heading">
+              <Heading as={"h2"} size={"6"} className="text-heading">
                 {title}
               </Heading>
             )}

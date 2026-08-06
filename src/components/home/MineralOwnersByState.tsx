@@ -16,10 +16,11 @@ const MineralOwnersByState = ({ locations }: Props) => {
     <Container>
       <Flex direction={"column"} gap={"5"}>
         <Flex direction={"column"} align={"center"} gap={"4"}>
-          <Heading size={"8"} className="text-center text-heading">
+          <Heading as={"h2"} size={"8"} className="text-center text-heading">
             {label.MineralOwnersByState}
           </Heading>
           <Text
+            as={"p"}
             size={"3"}
             color="gray"
             className="!w-full lg:!w-[70%] text-center"
@@ -50,7 +51,9 @@ const MineralOwnersByState = ({ locations }: Props) => {
             height={30}
             width={30}
           />
-          <Text size="3">Map Search</Text>
+          <Text as={"p"} size="3">
+            Map Search
+          </Text>
         </Link>
       </Flex>
     </Container>

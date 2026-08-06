@@ -34,6 +34,10 @@ const Dashboard = ({ user }: any) => {
     <>
       <Head>
         <title>Dashboard</title>
+        <meta
+        name="robots"
+        content={"noindex, nofollow, noarchive, nosnippet"}
+      />
       </Head>
       <SiteHeader />
       <Container className="lg:w-8/12 mx-auto">

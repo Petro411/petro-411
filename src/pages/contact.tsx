@@ -4,9 +4,9 @@ import GetApiErrorMessage from "@/utils/GetApiErrorMessage";
 import baseApi, { endpoints } from "@/services/api";
 import { useMutation } from "@/hooks/useMutation";
 import SiteHeader from "@/components/SiteHeader";
+import SeoHead from "@/components/seo/home.meta";
 import PageHeader from "@/components/PageHeader";
 import Container from "@/components/Container";
-import { useQuery } from "@/hooks/useQuery";
 import Faqs from "@/components/home/Faqs";
 import Footer from "@/components/Footer";
 import toast from "react-simple-toasts";
@@ -18,8 +18,6 @@ import Head from "next/head";
 
 const ContactPage = () => {
   const [faqs, setFaqs] = useState([]);
-
-  const getFaqsApi = useQuery(endpoints.getFaqs);
 
   const { request, loading } = useMutation(endpoints.contact);
 
@@ -64,9 +62,13 @@ const ContactPage = () => {
 
   return (
     <>
-      <Head>
-        <title>Services</title>
-      </Head>
+      <SeoHead
+      title="Contact Us | Petro411"
+      description="Have questions or need assistance? Reach out to the Petro411 team for support, inquiries, or feedback. We're here to help you with your mineral owner data needs."
+      url="https://www.petro411.com/contact"
+      faqs={faqs}
+      allowIndexing={true}
+      />
       <SiteHeader />
       <PageHeader
         title={label.ContactUs}
