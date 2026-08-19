@@ -59,6 +59,7 @@ export const endpoints = {
   verifyOtp: "/auth/verify-otp",
   queryOwners: "/owners/query-owners",
   ownerDetails: "/owners",
+  getOwnerIds:"/owners/get-owners-ids",
   getFaqs: "/faqs",
   getLocations: "/locations",
   contact:"/contact",

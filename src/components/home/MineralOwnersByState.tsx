@@ -46,7 +46,7 @@ const MineralOwnersByState = ({ locations }: Props) => {
         >
           <Image
             src={"/assets/images/us.png"}
-            alt=""
+            alt="Petro411 - USA flag"
             className="rounded overflow-hidden"
             height={30}
             width={30}

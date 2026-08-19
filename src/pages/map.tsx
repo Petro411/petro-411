@@ -1,12 +1,12 @@
-import { CircleIcon, DownloadIcon, EyeOpenIcon, LockClosedIcon, PersonIcon, ReloadIcon, } from "@radix-ui/react-icons";
-import { Flex, Heading, Select, Table, Text, TextField, Tooltip, } from "@radix-ui/themes";
-import { ComposableMap, Geographies, Geography, Marker, } from "react-simple-maps";
-import React, { memo, ReactNode, useCallback, useEffect, useState, } from "react";
-import { downloadMineralList } from "@/utils/downloadMineralList";
+import { DownloadIcon, EyeOpenIcon, LockClosedIcon, PersonIcon, ReloadIcon, } from "@radix-ui/react-icons";
+import { Flex, Heading, Select, Table, Text, Tooltip } from "@radix-ui/themes";
+import { memo, ReactNode, useCallback, useEffect, useState } from "react";
+import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import GetApiErrorMessage from "@/utils/GetApiErrorMessage";
 import OwnerDetails from "@/components/OwnerDetails";
 import baseApi, { endpoints } from "@/services/api";
 import SiteHeader from "@/components/SiteHeader";
+import SeoHead from "@/components/seo/home.meta";
 import { getUser } from "@/context/AuthContext";
 import Container from "@/components/Container";
 import { getItem } from "@/utils/Localstorage";
@@ -17,23 +17,18 @@ import Footer from "@/components/Footer";
 import toast from "react-simple-toasts";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Head from "next/head";
 
 
 const STATES_TOPO_JSON =
   "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
 
 function Map() {
-  const user = getUser()?.user;
-  const router = useRouter();
   const [selectedCounty, setSelectedCounty] = useState<string | null>(null);
   const [statesGeo, setStatesGeo] = useState<any>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [displayedCounties, setDisplayedCounties] = useState<string[]>([]);
 
-  const [countySearch, setCountySearch] = useState("");
   const { request, loading } = useQuery();
-  const getMineralsApi = useQuery();
 
   const getCountiesByState = useCallback(async () => {
     try {
@@ -46,51 +41,6 @@ function Map() {
       toast(GetApiErrorMessage(error));
     }
   }, [selectedState]);
-
-  const handleDownload = useCallback(() => {
-    try {
-      if (!user) {
-        router.push("/auth/login");
-        return;
-      }
-
-      const data = getMineralsApi.data?.minerals;
-
-      const headers = Object.keys(data[0]);
-
-      const csvRows = [
-        headers.join(","), // Header row
-        ...data.map((row: any) =>
-          headers
-            .map((field) => {
-              const value = row[field];
-
-              if (Array.isArray(value)) {
-                return `"${value.join("; ")}"`; // Join array values with ;
-              }
-
-              if (field === "state" && value?.name && value?.code) {
-                return `"${value.name}, ${value.code}"`; // Format state
-              }
-
-              return `"${value ?? ""}"`; // Default case
-            })
-            .join(",")
-        ),
-      ];
-
-      const csvContent = csvRows.join("\n");
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "minerals.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {}
-  }, [getMineralsApi.data?.minerals]);
 
   useEffect(() => {
     try {
@@ -120,10 +70,24 @@ function Map() {
 
   return (
     <div>
-      <Head>
-        <title>Owners</title>
-      </Head>
+      <SeoHead
+        title="Mineral Owners Map | Search by State & County | Petro411"
+        description="Explore Petro411's interactive map to find mineral owners near you. Select a state, choose a county, and view detailed mineral ownership listings instantly."
+        url="https://www.petro411.com/map"
+      />
       <SiteHeader />
+      <div className={`gradientBg text-white`}>
+        <Container className="min-h-[40vh] items-center justify-center flex flex-col text-center gap-4">
+          <h1 className="text-4xl md:text-5xl font-bold">
+            Mineral Owners Map
+            {/* {label.YourMineralOwners} */}
+          </h1>
+          <Text as={"p"} size={"3"} className="w-full md:w-[80%] lg:w-[60%]">
+            Select a state on the map to view its counties, then choose a county to see the list of mineral owners in that area.
+            {/* {label.SimplifiesLandAcquisition} */}
+          </Text>
+        </Container>
+      </div>
       {!statesGeo && (
         <Flex
           direction={"column"}
@@ -144,8 +108,8 @@ function Map() {
       )}
       {statesGeo && (
         <Container className="my-12">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="col-span-1 bg-white rounded-xl p-5 shadow-md border relative">
+          <div className="flex flex-row gap-8">
+            <div className="w-6/12 mx-auto bg-white rounded-xl p-5 shadow-md border relative">
               <div className="flex flex-row items-center justify-between">
                 <Heading size={"4"} className="text-heading">
                   Select State
@@ -202,32 +166,15 @@ function Map() {
             </div>
 
             {/* Counties list */}
-            <div className="col-span-1 rounded-xl p-5 shadow-md border bg-white h-fit">
-              <Heading size={"4"} className="text-heading">
-                Counties
-              </Heading>
+            {selectedState && (
+              <div className="w-6/12 rounded-xl p-5 shadow-md border bg-white h-fit">
+                <Heading size={"4"} className="text-heading">
+                  Counties
+                </Heading>
 
-              <TextField.Root
-                className="mt-3"
-                placeholder="Search counties"
-                radius="large"
-                value={countySearch}
-                onChange={(e) => setCountySearch(e.target.value)}
-              />
-
-              {!selectedState ? (
-                <ListEmpty
-                  description={`No state selected!\nSelect a state to see the counties.`}
-                />
-              ) : !loading && displayedCounties?.length ? (
-                <ul className="mt-3 min-h-[200px] max-h-[250px] overflow-auto">
-                  {displayedCounties
-                    ?.filter((item: any) =>
-                      item?.name
-                        ?.toLowerCase()
-                        ?.includes(countySearch?.toLowerCase())
-                    )
-                    ?.map((item: any, index: number) => (
+                {!loading && displayedCounties?.length ? (
+                  <ul className="mt-3 min-h-[200px] max-h-[250px] overflow-auto">
+                    {displayedCounties?.map((item: any, index: number) => (
                       <li
                         onClick={(e) => setSelectedCounty(item?.name)}
                         key={index}
@@ -241,17 +188,18 @@ function Map() {
                         {item?.name}
                       </li>
                     ))}
-                </ul>
-              ) : (
-                <ListEmpty
-                  description={
-                    loading
-                      ? "loading counties..."
-                      : `No counties listed below this state!`
-                  }
-                />
-              )}
-            </div>
+                  </ul>
+                ) : (
+                  <ListEmpty
+                    description={
+                      loading
+                        ? "loading counties..."
+                        : `No counties listed below this state!`
+                    }
+                  />
+                )}
+              </div>
+            )}
 
             {/* Owners count */}
           </div>
@@ -308,9 +256,11 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
   const handleDownload = useCallback(async () => {
     if (data?.minerals?.length) {
       try {
-        setIsDownloading(true)
+        setIsDownloading(true);
         const token = getItem("token");
-        const res = await baseApi.get(`${endpoints.updateDownloadLimit}?token=${token}&county=${state}`)
+        const res = await baseApi.get(
+          `${endpoints.updateDownloadLimit}?token=${token}&county=${state}`
+        );
         const blob = new Blob([res.data?.csv], {
           type: "text/csv;charset=utf-8;",
         });
@@ -328,10 +278,10 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
       } catch (error) {
         toast(GetApiErrorMessage(error));
       } finally {
-        setIsDownloading(false)
+        setIsDownloading(false);
       }
     }
-  }, [state,data?.minerals,]);
+  }, [state, data?.minerals]);
 
   useEffect(() => {
     if (state?.trim()?.length) {
@@ -477,7 +427,6 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
                     {/* Counties */}
                     <Table.Cell>{item?.counties?.join(", ")}</Table.Cell>
 
-
                     <Table.Cell>{item?.city ? item?.city : "-"}</Table.Cell>
 
                     {/* Zipcode */}
@@ -567,15 +516,6 @@ const NumberOfRows = memo(({ value, onChange }: NumberOfRowsProps) => {
         <Select.Item value="30">30</Select.Item>
         <Select.Item value="40">40</Select.Item>
         <Select.Item value="50">50</Select.Item>
-        <Select.Item value="60">60</Select.Item>
-        <Select.Item value="70">70</Select.Item>
-        <Select.Item value="80">80</Select.Item>
-        <Select.Item value="90">90</Select.Item>
-        <Select.Item value="100">100</Select.Item>
-        <Select.Item value="200">200</Select.Item>
-        <Select.Item value="300">300</Select.Item>
-        <Select.Item value="400">400</Select.Item>
-        <Select.Item value="500">500</Select.Item>
       </Select.Content>
     </Select.Root>
   );

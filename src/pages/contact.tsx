@@ -13,7 +13,6 @@ import toast from "react-simple-toasts";
 import { GetStaticProps } from "next";
 import { label } from "@/branding";
 import Image from "next/image";
-import Head from "next/head";
 
 
 const ContactPage = () => {

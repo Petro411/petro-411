@@ -1,6 +1,7 @@
 # *
 User-agent: *
 Allow: /
+Disallow: /owners/*
 
 # Host
 Host: https://www.petro411.com

@@ -100,6 +100,8 @@ export default function SeoHead({
             : "noindex, nofollow, noarchive, nosnippet"
         }
       />
+      <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+      <link rel="manifest" href="/site.webmanifest" />
 
       {/* Open Graph */}
       <meta property="og:title" content={title} />
