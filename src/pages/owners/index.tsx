@@ -200,7 +200,7 @@ const Owners = ({
           </div>
         )}
 
-        {totalPages && (
+        {totalPages? (
           <ReactPaginate
             breakLabel="..."
             nextLabel="Next"
@@ -217,7 +217,7 @@ const Owners = ({
             nextClassName="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 cursor-pointer"
             breakClassName="px-4 py-2 text-gray-500"
           />
-        )}
+        ):""}
       </Container>
       <Footer />
     </>

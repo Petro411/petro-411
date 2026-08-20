@@ -213,14 +213,14 @@ const OwnerDetails = ({ owner }: Props) => {
   );
 };
 export const getStaticPaths = async () => {
-  const res = await baseApi.get(endpoints.getOwnerIds);
-  const paths =
-    res.data?.owners?.map((id: string) => ({
-      params: { id },
-    })) || [];
+  // const res = await baseApi.get(endpoints.getOwnerIds);
+  // const paths =
+  //   res.data?.owners?.map((id: string) => ({
+  //     params: { id },
+  //   })) || [];
 
   return {
-    paths,
+    paths:[],
     fallback: "blocking",
   };
 };
