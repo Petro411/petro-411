@@ -1,7 +1,7 @@
 import { Button, Flex, Separator, Text, TextField } from "@radix-ui/themes";
 import { EyeClosedIcon, EyeOpenIcon } from "@radix-ui/react-icons";
-import React, { ChangeEvent, useEffect, useState } from "react";
 import GetApiErrorMessage from "@/utils/GetApiErrorMessage";
+import { ChangeEvent, useEffect, useState } from "react";
 import GoogleAuth from "@/components/auth/GoogleAuth";
 import AuthLayout from "@/components/auth/AuthLayout";
 import SeoHeadAuth from "@/components/seo/auth.meta";
@@ -15,7 +15,6 @@ import withApp from "@/utils/withApp";
 import { setCookie } from "nookies";
 import { label } from "@/branding";
 import Link from "next/link";
-import Head from "next/head";
 
 
 const Login = () => {

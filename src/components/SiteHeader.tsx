@@ -18,7 +18,7 @@ type Props = {
 
 const hideRoutes = ["/pricing"];
 
-const SiteHeader = ({ hideNavigation = false, className }: Props) => {
+export const SiteHeader = memo(({ hideNavigation = false, className }: Props) => {
   const [visible, setVisible] = useState(false);
   const router = useRouter();
   const pathname = router.pathname;
@@ -121,6 +121,6 @@ const SiteHeader = ({ hideNavigation = false, className }: Props) => {
       <Sidebar visible={visible} setVisible={setVisible} />
     </>
   );
-};
+});
 
-export default memo(SiteHeader);
+export default SiteHeader;

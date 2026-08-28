@@ -11,7 +11,7 @@ type Props = {
   locations: any[] | [];
 };
 
-const MineralOwnersByState = ({ locations }: Props) => {
+export const MineralOwnersByState = memo(({ locations }: Props) => {
   return (
     <Container>
       <Flex direction={"column"} gap={"5"}>
@@ -58,6 +58,6 @@ const MineralOwnersByState = ({ locations }: Props) => {
       </Flex>
     </Container>
   );
-};
+});
 
-export default memo(MineralOwnersByState);
+export default MineralOwnersByState;

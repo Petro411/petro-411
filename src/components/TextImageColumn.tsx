@@ -1,11 +1,9 @@
 import { Heading, Text } from "@radix-ui/themes";
-import React, { memo, ReactNode } from "react";
+import { memo, ReactNode } from "react";
 import Image from "next/image";
 
 import Container from "./Container";
 
-
-const imageFirstClassName = "lg:order-1 order-2";
 
 type Props = {
   title?: string;

@@ -11,7 +11,7 @@ async function handler(req: any, res: NextApiResponse) {
       "counties.0": { $exists: true },
       "state.code": { $exists: true },
       "state.name": { $exists: true },
-    }).select(['_id']);
+    }).select(['_id']).lean();
 
     return res.status(200).json({ owners: owner.map((o) => o._id), success: true });
   } catch (error: any) {

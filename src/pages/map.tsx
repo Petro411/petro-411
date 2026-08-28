@@ -1,72 +1,28 @@
 import { DownloadIcon, EyeOpenIcon, LockClosedIcon, PersonIcon, ReloadIcon, } from "@radix-ui/react-icons";
 import { Flex, Heading, Select, Table, Text, Tooltip } from "@radix-ui/themes";
+import { useCountiesByState, useOwnersByCounty, useStatesMap } from "@/hooks";
 import { memo, ReactNode, useCallback, useEffect, useState } from "react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import GetApiErrorMessage from "@/utils/GetApiErrorMessage";
 import OwnerDetails from "@/components/OwnerDetails";
 import baseApi, { endpoints } from "@/services/api";
-import SiteHeader from "@/components/SiteHeader";
+import { Footer, SiteHeader } from "@/components";
 import SeoHead from "@/components/seo/home.meta";
 import { getUser } from "@/context/AuthContext";
 import Container from "@/components/Container";
 import { getItem } from "@/utils/Localstorage";
 import { useQuery } from "@/hooks/useQuery";
 import ReactPaginate from "react-paginate";
-import { feature } from "topojson-client";
-import Footer from "@/components/Footer";
 import toast from "react-simple-toasts";
-import { useRouter } from "next/router";
 import Link from "next/link";
 
 
-const STATES_TOPO_JSON =
-  "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
-
 function Map() {
   const [selectedCounty, setSelectedCounty] = useState<string | null>(null);
-  const [statesGeo, setStatesGeo] = useState<any>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
-  const [displayedCounties, setDisplayedCounties] = useState<string[]>([]);
 
-  const { request, loading } = useQuery();
-
-  const getCountiesByState = useCallback(async () => {
-    try {
-      const res = await request(
-        `${endpoints.getCountiesByState}?name=${selectedState}`
-      );
-      setDisplayedCounties(res.locations);
-    } catch (error) {
-      setDisplayedCounties([]);
-      toast(GetApiErrorMessage(error));
-    }
-  }, [selectedState]);
-
-  useEffect(() => {
-    try {
-      fetch(STATES_TOPO_JSON)
-        .then((res) => res.json())
-        .then((topology) => {
-          const geo = feature(topology, topology.objects.states) as any;
-          setStatesGeo(geo);
-
-          const stateIdMap: Record<string, string> = {};
-          for (const feature of geo.features) {
-            stateIdMap[feature.id] = feature.properties.name;
-          }
-        });
-    } catch (error) {
-      console.log(error, "map data error");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!selectedState) {
-      setDisplayedCounties([]);
-      return;
-    }
-    getCountiesByState();
-  }, [selectedState]);
+  const countiesQuery = useCountiesByState(selectedState || "");
+  const statesGeo= useStatesMap();
 
   return (
     <div>
@@ -83,12 +39,13 @@ function Map() {
             {/* {label.YourMineralOwners} */}
           </h1>
           <Text as={"p"} size={"3"} className="w-full md:w-[80%] lg:w-[60%]">
-            Select a state on the map to view its counties, then choose a county to see the list of mineral owners in that area.
+            Select a state on the map to view its counties, then choose a county
+            to see the list of mineral owners in that area.
             {/* {label.SimplifiesLandAcquisition} */}
           </Text>
         </Container>
       </div>
-      {!statesGeo && (
+      {!statesGeo?.data && (
         <Flex
           direction={"column"}
           align={"center"}
@@ -106,7 +63,7 @@ function Map() {
           </Text>
         </Flex>
       )}
-      {statesGeo && (
+      {statesGeo?.data && (
         <Container className="my-12">
           <div className="flex flex-row gap-8">
             <div className="w-6/12 mx-auto bg-white rounded-xl p-5 shadow-md border relative">
@@ -128,13 +85,13 @@ function Map() {
                   width={900}
                   height={900}
                 >
-                  <Geographies geography={statesGeo}>
+                  <Geographies geography={statesGeo.data}>
                     {({ geographies }) =>
-                      geographies.map((geo) => {
+                      geographies.map((geo,i) => {
                         const name = geo.properties.name;
                         const isSelected = name === selectedState;
                         return (
-                          <Tooltip content={name}>
+                          <Tooltip key={i} content={name}>
                             <Geography
                               key={geo.rsmKey}
                               geography={geo}
@@ -172,27 +129,30 @@ function Map() {
                   Counties
                 </Heading>
 
-                {!loading && displayedCounties?.length ? (
+                {!countiesQuery.isPending &&
+                countiesQuery?.data?.locations?.length ? (
                   <ul className="mt-3 min-h-[200px] max-h-[250px] overflow-auto">
-                    {displayedCounties?.map((item: any, index: number) => (
-                      <li
-                        onClick={(e) => setSelectedCounty(item?.name)}
-                        key={index}
-                        value={item?.name}
-                        className={`cursor-pointer   px-3 py-2 rounded-lg text-sm ${
-                          selectedCounty === item?.name
-                            ? "bg-primary text-white"
-                            : "hover:bg-gray-200 focus:bg-gray-200 active:bg-gray-200"
-                        }`}
-                      >
-                        {item?.name}
-                      </li>
-                    ))}
+                    {countiesQuery?.data?.locations?.map(
+                      (item: any, index: number) => (
+                        <li
+                          onClick={() => setSelectedCounty(item?.name)}
+                          key={index}
+                          value={item?.name}
+                          className={`cursor-pointer   px-3 py-2 rounded-lg text-sm ${
+                            selectedCounty === item?.name
+                              ? "bg-primary text-white"
+                              : "hover:bg-gray-200 focus:bg-gray-200 active:bg-gray-200"
+                          }`}
+                        >
+                          {item?.name}
+                        </li>
+                      )
+                    )}
                   </ul>
                 ) : (
                   <ListEmpty
                     description={
-                      loading
+                      countiesQuery?.isPending
                         ? "loading counties..."
                         : `No counties listed below this state!`
                     }
@@ -203,7 +163,12 @@ function Map() {
 
             {/* Owners count */}
           </div>
-          <MineralsTable state={selectedCounty ?? ""} />
+          {selectedState && selectedCounty && (
+            <MineralsTable
+              state={selectedState ?? ""}
+              county={selectedCounty ?? ""}
+            />
+          )}
         </Container>
       )}
       <Footer />
@@ -236,30 +201,37 @@ const ListEmpty = memo(({ description, children }: ListEmptyProps) => {
 
 type MineralsTableProps = {
   state: string;
+  county: string;
 };
 
-const MineralsTable = memo(({ state }: MineralsTableProps) => {
+const MineralsTable = memo(({ state, county }: MineralsTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
   const user = getUser()?.user;
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const { request, data, loading } = useQuery(
-    `${endpoints.getOwnersByCounty}?name=${state}&page=${currentPage}&limit=${limit}`
-  );
+  const ownersQuery = useOwnersByCounty({
+    state,
+    county,
+    page:currentPage,
+    limit
+  })
+
+  // const { request, data, loading } = useQuery(
+  //   `${endpoints.getOwnersByCounty}?county=${county}&state=${state}&page=${currentPage}&limit=${limit}`
+  // );
 
   // const updateDownloadLimitApi = useQuery();
 
   const [selectedMineral, setSelectedMineral] = useState<string | null>(null);
 
   const handleDownload = useCallback(async () => {
-    if (data?.minerals?.length) {
+    if (ownersQuery?.data?.minerals?.length) {
       try {
         setIsDownloading(true);
         const token = getItem("token");
         const res = await baseApi.get(
-          `${endpoints.updateDownloadLimit}?token=${token}&county=${state}`
+          `${endpoints.updateDownloadLimit}?token=${token}&state=${state}&county=${county}`
         );
         const blob = new Blob([res.data?.csv], {
           type: "text/csv;charset=utf-8;",
@@ -281,17 +253,7 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
         setIsDownloading(false);
       }
     }
-  }, [state, data?.minerals]);
-
-  useEffect(() => {
-    if (state?.trim()?.length) {
-      request().then((res: any) => {
-        if (res?.pagination) {
-          setTotalPages(res.pagination.totalPages);
-        }
-      });
-    }
-  }, [state, currentPage, limit]);
+  }, [state, county, ownersQuery?.data?.minerals]);
 
   const handlePageClick = (event: { selected: number }) => {
     setCurrentPage(event.selected + 1);
@@ -324,10 +286,11 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
               width={18}
               color="gray"
               className="cursor-pointer"
-              onClick={() => request()}
+              onClick={()=>ownersQuery.refetch()}
             />
-            {data?.minerals?.length ? (
-              !user || !user?.subscription ? (
+            {ownersQuery?.data?.minerals?.length ? (
+              !user || !user?.subscription
+               ? (
                 <></>
               ) : (
                 <>
@@ -353,11 +316,11 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
           </Flex>
         </Flex>
 
-        {loading ? (
+        {ownersQuery.isPending ? (
           <ListEmpty>
             <ReloadIcon className="animate-spin" height={20} width={20} />
           </ListEmpty>
-        ) : data?.minerals?.length ? (
+        ) : ownersQuery?.data?.minerals?.length ? (
           <div className="overflow-x-auto">
             <Table.Root className="min-w-[1200px]">
               <Table.Header>
@@ -375,18 +338,18 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
               </Table.Header>
 
               <Table.Body>
-                {data.minerals.map((item: any, index: number) => (
+                {ownersQuery?.data.minerals.map((item: any, index: number) => (
                   <Table.Row key={index}>
-                    {/* Names */}
                     <Table.Cell>
                       <div className="flex flex-col">
                         {item?.names?.map((name: string, i: number) => (
-                          <span key={i}>{name}</span>
+                          <span key={i} className="line-clamp-3">
+                            {name}
+                          </span>
                         ))}
                       </div>
                     </Table.Cell>
 
-                    {/* Emails */}
                     <Table.Cell>
                       {!user || !user?.subscription ? (
                         <LockedSection user={user} />
@@ -399,7 +362,6 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
                       )}
                     </Table.Cell>
 
-                    {/* Phone numbers */}
                     <Table.Cell>
                       {!user || !user?.subscription ? (
                         <LockedSection user={user} />
@@ -412,7 +374,6 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
                       )}
                     </Table.Cell>
 
-                    {/* Addresses */}
                     <Table.Cell className="!w-[300px]">
                       <div className="flex flex-col">
                         {item?.addresses?.map((addr: string, i: number) => (
@@ -421,18 +382,14 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
                       </div>
                     </Table.Cell>
 
-                    {/* State */}
                     <Table.Cell>{item?.state?.name}</Table.Cell>
 
-                    {/* Counties */}
                     <Table.Cell>{item?.counties?.join(", ")}</Table.Cell>
 
                     <Table.Cell>{item?.city ? item?.city : "-"}</Table.Cell>
 
-                    {/* Zipcode */}
                     <Table.Cell>{item?.zipcode}</Table.Cell>
 
-                    {/* Action */}
                     <Table.Cell className="w-[30px]">
                       <EyeOpenIcon
                         onClick={() => setSelectedMineral(item?._id)}
@@ -451,7 +408,7 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
           <ListEmpty description="No results found!" />
         )}
       </Flex>
-      {totalPages > 1 && (
+      {ownersQuery?.data?.pagination?.totalPages > 1 && (
         <Flex direction={"row"} align={"center"} justify={"between"} mt={"4"}>
           <NumberOfRows
             value={limit?.toString()}
@@ -462,7 +419,7 @@ const MineralsTable = memo(({ state }: MineralsTableProps) => {
             nextLabel="Next"
             onPageChange={handlePageClick}
             pageRangeDisplayed={5}
-            pageCount={totalPages}
+            pageCount={ownersQuery?.data?.pagination?.totalPages || 0}
             forcePage={currentPage - 1}
             previousLabel="Prev"
             renderOnZeroPageCount={null}

@@ -42,7 +42,7 @@ async function handler(req: any, res: NextApiResponse) {
 
 
         const [owners, totalItems, counties] = await Promise.all([
-            MineralOwner.find(sanitizedFilter).skip(skip).limit(limitNum),
+            MineralOwner.find(sanitizedFilter).skip(skip).limit(limitNum).lean(),
             MineralOwner.countDocuments(sanitizedFilter),
             Location.find({ type: "county", "state.code": { $regex: new RegExp(ownerCity, 'i') } }).sort({ name: 1 })
         ]);

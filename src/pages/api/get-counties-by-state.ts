@@ -8,7 +8,7 @@ async function handler(req: any, res: any) {
         if (!name?.trim()?.length) {
             return res.status(200).json({ locations: [], success: true });
         }
-        const locations = await Location.find({type:"county", "state.name": name }).select(['-state','-__v'])
+        const locations = await Location.find({type:"county", "state.name": name }).select(['-state','-__v']).lean()
 
         return res.status(200).json({ locations, success: true });
     } catch (error: any) {

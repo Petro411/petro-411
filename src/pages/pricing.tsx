@@ -10,7 +10,6 @@ import { Flex, Heading, Separator, Text } from "@radix-ui/themes";
 import { GetStaticProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import PayPalButton from "@/components/dashboard/PaypalButton";
 import { label } from "@/branding";
 import SeoHeadPricing from "@/components/seo/pricing.meta";
 
@@ -74,23 +73,6 @@ const Pricing = ({ plans }: any) => {
               >
                 Buy
               </button>
-
-              {/* PayPal button only if logged in */}
-              {isLoggedIn && (
-                <div className="!mt-3">
-                  <PayPalButton
-                    plan={{
-                      _id: item._id,
-                      priceId: item.priceId,
-                      amount: item.amount,
-                      title: item.title,
-                    }}
-                    onSuccess={() => {
-                      router.push("/dashboard");
-                    }}
-                  />
-                </div>
-              )}
 
               <Heading as="h5" size={"3"} color="gray" className="mt-5 mb-1">
                 Features

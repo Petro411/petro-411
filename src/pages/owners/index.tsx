@@ -3,22 +3,17 @@ import "swiper/css/navigation";
 import "swiper/css/free-mode";
 import "swiper/css";
 
-import MineralOwnerFilter from "@/components/home/MineralOwnerFilter";
+import { MineralOwnerFilter, Container, SiteHeader, Heading, Text, Footer, MineralOwnerCard, } from "@/components";
 import { FreeMode, Navigation } from "swiper/modules";
 import baseApi, { endpoints } from "@/services/api";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SiteHeader from "@/components/SiteHeader";
 import SeoHead from "@/components/seo/home.meta";
-import { Heading, Text } from "@radix-ui/themes";
-import Container from "@/components/Container";
 import ReactPaginate from "react-paginate";
 import { GetServerSideProps } from "next";
-import Footer from "@/components/Footer";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { label } from "@/branding";
 import Link from "next/link";
-import Head from "next/head";
 import moment from "moment";
 
 
@@ -59,20 +54,22 @@ const Owners = ({
 
   return (
     <>
-<SeoHead
-  title="Search Oil & Gas Well Owners by Name, State & County | Petro411"
-  description="Find oil and gas well owners quickly with Petro411's owner search tool. Search by first name, last name, state, or county to locate ownership records across the U.S."
-  url="https://www.petro411.com/owners"
-/>
+      <SeoHead
+        title="Search Oil & Gas Well Owners by Name, State & County | Petro411"
+        description="Find oil and gas well owners quickly with Petro411's owner search tool. Search by first name, last name, state, or county to locate ownership records across the U.S."
+        url="https://www.petro411.com/owners"
+      />
       <SiteHeader />
       <div className={`gradientBg text-white`}>
         <Container className="min-h-[60vh] items-center justify-center flex flex-col text-center gap-4">
           <h1 className="text-4xl md:text-5xl font-bold">
-            Search Mineral Owners by<br/> Name, State, & County
+            Search Mineral Owners by
+            <br /> Name, State, & County
             {/* {label.YourMineralOwners} */}
           </h1>
           <Text as={"p"} size={"3"} className="w-full md:w-[80%] lg:w-[60%]">
-            Search by first name, last name, state, or county to locate ownership records across the U.S.
+            Search by first name, last name, state, or county to locate
+            ownership records across the U.S.
             {/* {label.SimplifiesLandAcquisition} */}
           </Text>
         </Container>
@@ -84,7 +81,6 @@ const Owners = ({
         paragraph={label.FindMineralOwners}
         dropDownClasses={"w-full lg:w-[180px]"}
         locations={locations}
-        tabView={true}
       />
       <div className="md:-translate-y-12 text-center">
         <Link href={"/map"} className="underline text-center">
@@ -179,28 +175,18 @@ const Owners = ({
           </Heading>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
-            {owners?.map((item: any, index: number) => (
-              <Link
-                href={`/owners/${item?._id}`}
-                key={index}
-                className="cursor-pointer flex flex-col p-5 rounded-lg border hover:border-primary transition-all duration-300 hover:shadow-lg shadow-md"
-              >
-                <Heading
-                  as="h3"
-                  size={"3"}
-                  className="text-heading !line-clamp-2"
-                >
-                  {item?.names[0]}
-                </Heading>
-                <Text as="p" size={"1"} align={"right"} color="gray">
-                  {moment(item?.createdAt).format("MMMM DD YYYY")}
-                </Text>
-              </Link>
+            {owners?.map((item: any) => (
+              <MineralOwnerCard
+                key={item._id}
+                id={item._id}
+                name={item?.names[0] || "Unknown"}
+                date={moment(item?.createdAt).format("MMMM DD YYYY")}
+              />
             ))}
           </div>
         )}
 
-        {totalPages? (
+        {totalPages ? (
           <ReactPaginate
             breakLabel="..."
             nextLabel="Next"
@@ -217,7 +203,9 @@ const Owners = ({
             nextClassName="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 cursor-pointer"
             breakClassName="px-4 py-2 text-gray-500"
           />
-        ):""}
+        ) : (
+          ""
+        )}
       </Container>
       <Footer />
     </>

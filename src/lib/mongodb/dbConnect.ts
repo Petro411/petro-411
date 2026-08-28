@@ -9,27 +9,25 @@ if (!MONGODB_URI) {
   throw new Error("Please define the MONGODB_URI environment variable");
 }
 
-// Global cached object to prevent multiple connections across hot reloads
 let cached = (global as any).mongoose;
 if (!cached) {
   cached = (global as any).mongoose = { conn: null, promise: null };
 }
 
 export async function dbConnect() {
-  if (cached.conn) return cached.conn; // ✅ Use existing connection
+  if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
     const options: mongoose.ConnectOptions = {
-      maxPoolSize: 50, // ⬆️ bigger pool for high concurrency
-      minPoolSize: 5,  // ⬇️ keep a warm pool
-      maxIdleTimeMS: 30000, // free idle connections faster
-      serverSelectionTimeoutMS: 5000, // fail fast
-      socketTimeoutMS: 60000, // allow long queries
-      heartbeatFrequencyMS: 10000, // keep connection alive
-      family: 4, // prefer IPv4 for faster DNS resolution
+      maxPoolSize: 50,
+      minPoolSize: 5,
+      maxIdleTimeMS: 30000,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 60000,
+      heartbeatFrequencyMS: 10000,
+      family: 4,
     };
 
-    // ✅ Retry wrapper for resilience
     async function connectWithRetry(retries = 5, delay = 2000): Promise<typeof mongoose> {
       try {
         const conn = await mongoose.connect(MONGODB_URI, options);
@@ -45,7 +43,7 @@ export async function dbConnect() {
         }
         console.warn(`⚠️ MongoDB connection failed. Retrying in ${delay / 1000}s... (${retries} left)`);
         await new Promise(res => setTimeout(res, delay));
-        return connectWithRetry(retries - 1, delay * 2); // exponential backoff
+        return connectWithRetry(retries - 1, delay * 2); 
       }
     }
 
