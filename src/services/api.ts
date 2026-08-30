@@ -71,6 +71,7 @@ export const endpoints = {
     createPayPalOrder: "/paypal/create-order",
   capturePayPalOrder: "/paypal/capture-order",
   updateDownloadLimit: "/owners/download-list",
+  locationsList:"/locations-list"
 }
 
 export default baseApi;

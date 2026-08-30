@@ -11,7 +11,6 @@ import SeoHead from "@/components/seo/home.meta";
 import { getUser } from "@/context/AuthContext";
 import Container from "@/components/Container";
 import { getItem } from "@/utils/Localstorage";
-import { useQuery } from "@/hooks/useQuery";
 import ReactPaginate from "react-paginate";
 import toast from "react-simple-toasts";
 import Link from "next/link";
@@ -216,12 +215,6 @@ const MineralsTable = memo(({ state, county }: MineralsTableProps) => {
     page:currentPage,
     limit
   })
-
-  // const { request, data, loading } = useQuery(
-  //   `${endpoints.getOwnersByCounty}?county=${county}&state=${state}&page=${currentPage}&limit=${limit}`
-  // );
-
-  // const updateDownloadLimitApi = useQuery();
 
   const [selectedMineral, setSelectedMineral] = useState<string | null>(null);
 

@@ -4,11 +4,8 @@ import Location from "@/lib/mongodb/models/Location";
 
 async function handler(req: any, res: any) {
     try {
-        const { name } = req.query;
-        if (!name?.trim()?.length) {
-            return res.status(200).json({ locations: [], success: true });
-        }
-        const locations = await Location.find({type:"county", "state.name": name }).select(['-state','-__v']).lean()
+        const locations = await Location.find({})
+            .select(['-__v','-createdAt','-updatedAt']).lean();
 
         return res.status(200).json({ locations, success: true });
     } catch (error: any) {
@@ -16,7 +13,8 @@ async function handler(req: any, res: any) {
             message: error?.message,
             success: false,
             status: error?.statusCode ?? 500
-        })
+        });
     }
 }
-export default (withMethod(handler, ['GET']))
+
+export default withMethod(handler, ['GET']);
