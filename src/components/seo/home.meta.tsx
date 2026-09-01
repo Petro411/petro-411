@@ -57,6 +57,9 @@ export default function SeoHead({
     logo: "https://www.petro411.com/logo-name.png",
     description:
       "Petro411 provides accurate, secure mineral owner contact information nationwide for the oil and gas industry.",
+      sameAs:[
+        'https://www.linkedin.com/company/petro411/'
+      ]
   };
 
   const websiteSchema = {

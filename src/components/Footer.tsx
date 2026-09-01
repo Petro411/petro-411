@@ -20,7 +20,7 @@ export const Footer = () => {
             </Text>
             <div className="flex flex-row items-center gap-3">
               <Link
-                href="https://www.linkedin.com/in/devhasnain"
+                href="https://www.linkedin.com/company/petro411/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 text-blue hover:text-blue-600 hover:bg-gray-500/20 rounded-lg transition-colors"
