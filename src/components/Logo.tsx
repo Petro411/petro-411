@@ -9,7 +9,8 @@ const Logo = () => {
       <Image
         className=""
         src={"/logo-icon.png"}
-        alt="site-logo"
+        alt="Petro411 - Logo icon"
+        title="Petro411 - Logo icon"
         height={45}
         width={45}
         preload
@@ -17,7 +18,8 @@ const Logo = () => {
       <Image
         className=""
         src={"/logo-name.png"}
-        alt="site-logo"
+        alt="Petro411 - Logo"
+        title="Petro411 - Logo"
         height={155}
         width={155}
         preload
