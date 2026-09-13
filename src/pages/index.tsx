@@ -14,10 +14,9 @@ import { label } from "@/branding";
 type Props = {
   faqs: any[] | [];
   locations: any[] | [];
-  counties: any[] | [];
 };
 
-const Home = ({ faqs, locations, counties }: Props) => {
+const Home = ({ faqs, locations }: Props) => {
   return (
     <>
       <SeoHead faqs={faqs} />
@@ -32,7 +31,6 @@ const Home = ({ faqs, locations, counties }: Props) => {
           locations={locations}
         />
         <Flex direction={"column"} gap={"9"}>
-          {/* <NewCountiesSlider owners={counties} /> */}
           <MineralOwnersByState locations={locations} />
           <HowItWorks />
           <Testimonials />
@@ -49,19 +47,10 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   try {
     const faqsQuery = await baseApi.get(endpoints.getFaqs);
     const locsQuery = await baseApi.get(endpoints.getLocations);
-    // const res = await baseApi.get(
-    //   `${endpoints.queryOwners}?state=TX&page=1&limit=10`
-    // );
-    // const {
-    //   owners,
-    //   totalPages, counties, totalItems
-    // } = res.data;
     return {
       props: {
         faqs: faqsQuery?.data?.faqs ?? [],
         locations: locsQuery?.data?.locations ?? [],
-        // owners,
-        // counties
       },
       revalidate: 60,
     };

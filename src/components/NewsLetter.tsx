@@ -1,8 +1,7 @@
-import React, { ChangeEvent, FormEvent, memo, useCallback, useState } from "react";
+import { ChangeEvent, FormEvent, memo, useCallback, useState } from "react";
 import { Button, Flex, Heading, Text, TextField } from "@radix-ui/themes";
 import GetApiErrorMessage from "@/utils/GetApiErrorMessage";
-import { useMutation } from "@/hooks/useMutation";
-import { endpoints } from "@/services/api";
+import { useRegisterNewsLetter } from "@/hooks";
 import toast from "react-simple-toasts";
 import { label } from "@/branding";
 import Image from "next/image";
@@ -11,8 +10,7 @@ import Container from "./Container";
 
 
 const NewsLetter = () => {
-
-  const {request,loading} = useMutation(endpoints.registerEmail);
+  const { mutate, isPending } = useRegisterNewsLetter();
 
   const [form, setForm] = useState({
     name: "",
@@ -27,16 +25,16 @@ const NewsLetter = () => {
     [form]
   );
 
-  const handleOnSubmit = async (e:FormEvent)=>{
-    try {
-      e.preventDefault();
-      const res = await request(form);
-      toast(res?.message ?? "Successfull.")
-      setForm({email:"",name:""})
-    } catch (error) {
-      toast(GetApiErrorMessage(error));
-    }
-  }
+  const handleOnSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    mutate(form, {
+      onSuccess: () => {
+        toast("Email registered for newsletter.");
+        setForm({ name: "", email: "" });
+      },
+      onError: (e) => toast(GetApiErrorMessage(e)),
+    });
+  };
 
   return (
     <Container>
@@ -50,7 +48,10 @@ const NewsLetter = () => {
               {label.StayInLoopDes}
             </Text>
           </Flex>
-          <form className="flex flex-col gap-5 2xl:w-[70%] newsLetterFrom" onSubmit={handleOnSubmit}>
+          <form
+            className="flex flex-col gap-5 2xl:w-[70%] newsLetterFrom"
+            onSubmit={handleOnSubmit}
+          >
             <TextField.Root
               name="name"
               minLength={3}
@@ -72,8 +73,8 @@ const NewsLetter = () => {
               placeholder="Email address"
             />
             <Button
-            loading={loading}
-            disabled={loading}
+              loading={isPending}
+              disabled={isPending}
               className="!self-start !mt-5 !bg-primary !cursor-pointer !text-white hover:!bg-primary group"
               size={"4"}
             >

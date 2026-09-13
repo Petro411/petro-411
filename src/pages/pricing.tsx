@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Container from "@/components/Container";
 import Footer from "@/components/Footer";
@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { label } from "@/branding";
 import SeoHeadPricing from "@/components/seo/pricing.meta";
+import Link from "next/link";
 
 const Pricing = ({ plans }: any) => {
   const router = useRouter();
@@ -34,16 +35,11 @@ const Pricing = ({ plans }: any) => {
 
   return (
     <>
-      <SeoHeadPricing
-      plans={plans}
-      />
+      <SeoHeadPricing plans={plans} />
       <SiteHeader />
-      <PageHeader
-        title="Pricing"
-        description={label.SubscriptionPageDesc}
-      />
+      <PageHeader title="Pricing" description={label.SubscriptionPageDesc} />
       <Container>
-        <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-3 2xl:w-10/12 mx-auto gap-5">
+        <div className="py-16 grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-5">
           {plans?.map((item: any, index: number) => (
             <Flex
               key={index}
@@ -93,6 +89,25 @@ const Pricing = ({ plans }: any) => {
               </Text>
             </Flex>
           ))}
+          <Flex
+            direction={"column"}
+            className={`h-fit border rounded-xl p-6`}
+          >
+            <Heading as="h2" size={"4"} align={"left"} className="mb-2">
+              Custome Order
+            </Heading>
+            <Text as="p" size={"3"} color="gray" className="">
+              Need something tailored to your specific requirements? Contact us
+              with your details and we'll create a custom plan just for you.
+            </Text>
+
+            <Link
+              href={"/contact"}
+              className={`!mt-5 !border rounded-xl py-3 text-center !border-primary !bg-transparent !text-black hover:!bg-primary hover:!text-white`}
+            >
+              Contact Us
+            </Link>
+          </Flex>
         </div>
       </Container>
       <Footer />

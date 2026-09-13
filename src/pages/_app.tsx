@@ -36,15 +36,15 @@ Router.events.on("routeChangeError", () => {
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryProvider>
-    <AuthContextProvider>
-      <Theme>
-        <GoogleOAuthProvider
-          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
-        >
-          <Component {...pageProps} />
-        </GoogleOAuthProvider>
-      </Theme>
-    </AuthContextProvider>
+      <AuthContextProvider>
+        <Theme>
+          <GoogleOAuthProvider
+            clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
+          >
+            <Component {...pageProps} />
+          </GoogleOAuthProvider>
+        </Theme>
+      </AuthContextProvider>
     </QueryProvider>
   );
 }
